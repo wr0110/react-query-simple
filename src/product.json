@@ -1,0 +1,37 @@
+[
+    {
+        "name": "Base Tee - Black",
+        "price": "$45.00",
+        "color": "Black",
+        "sizes": ["s", "m" , "l" , "xl", "xxl"],
+        "images": [
+            "https://cdn.shopify.com/s/files/1/0242/0156/0160/products/LSKD_Jungle_Ella_Andie_108-editedpsd.jpg?v=1649635995",
+            "https://cdn.shopify.com/s/files/1/0242/0156/0160/products/LSKD_Jungle_Ella_Andie_110edited.jpg?v=1649635995",
+            "https://cdn.shopify.com/s/files/1/0242/0156/0160/products/LSKD_Jungle_Ella_Andie_107edited.jpg?v=1649635995",
+            "https://cdn.shopify.com/s/files/1/0242/0156/0160/products/LSKD_Jungle_Ella_Andie_108-editedpsd.jpg?v=1649635995"
+        ],
+        "video": "https://cdn.shopify.com/s/files/1/0242/0156/0160/t/36/assets/4a9d497a-b1a7-4a45-8e9c-46356ab13af9_640.mp4"
+    },
+    {
+        "name": "Essential Puffer Vest",
+        "price": "$110.00",
+        "color": "Laurel Oak",
+        "sizes": ["xxs","xs","s", "m" , "l" ],
+        "images": [
+            "https://cdn.shopify.com/s/files/1/0242/0156/0160/products/LSKD_Jungle_Ella_Andie_108-editedpsd.jpg?v=1649635995",
+            "https://cdn.shopify.com/s/files/1/0242/0156/0160/products/LSKD_Jungle_Ella_Andie_110edited.jpg?v=1649635995",
+            "https://cdn.shopify.com/s/files/1/0242/0156/0160/products/LSKD_Jungle_Ella_Andie_107edited.jpg?v=1649635995",
+            "https://cdn.shopify.com/s/files/1/0242/0156/0160/products/LSKD_Jungle_Ella_Andie_108-editedpsd.jpg?v=1649635995",
+            "https://cdn.shopify.com/s/files/1/0242/0156/0160/products/LSKD_Jungle_Ella_Andie_110edited.jpg?v=1649635995"
+        ],
+        "video": "https://cdn.shopify.com/s/files/1/0993/2004/t/178/assets/4c1a7791-3720-4271-a6d5-6cf1f6eb7a71_640.mp4"
+    },
+    {
+        "name": "Elixir X-Length Bike Short",
+        "price": "$70.00",
+        "color": "Nile Blue",
+        "sizes": ["xxs","xs","s", "m" , "l" , "xl"],
+        "images": ["https://cdn.shopify.com/s/files/1/0242/0156/0160/products/06-16Studio-YogaDay_002.jpg?v=1655719012", "https://cdn.shopify.com/s/files/1/0242/0156/0160/products/06-16Studio-YogaDay_006.jpg?v=1655719012" ,"https://cdn.shopify.com/s/files/1/0242/0156/0160/products/06-16Studio-YogaDay_010.jpg?v=1655719012"],
+        "video": "https://cdn.shopify.com/s/files/1/0242/0156/0160/t/36/assets/4f332b27-3c5f-445e-b585-ddbe97771db4_640.mp4"
+    }
+]
