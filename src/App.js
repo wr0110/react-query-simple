@@ -61,9 +61,7 @@ function App() {
   const [showDetails, setShowDetails] = useState(false);
   const minSwipeDistance = 50;
 
-  const { data: videos, isLoading: isVideoLoading } = useQuery('videos', () =>
-    getVideos(1, '5fc01d3d4061493cd8e52fea')
-  );
+  const { data: videos } = useQuery('videos', () => getVideos(1, '5fc01d3d4061493cd8e52fea'));
 
   const {
     data: checkoutData,
@@ -82,12 +80,11 @@ function App() {
       setProductsByVideo(videoData);
       setLength(videos.data.data.length);
     }
-  }, [isVideoLoading, videos, setLength]);
+  }, [videos]);
 
   useEffect(() => {
     if (checkoutData) {
-      const checkoutItems = checkoutData.data.data.attributes.line_items;
-      setItems(checkoutItems);
+      setItems(checkoutData.data.data.attributes.line_items);
     }
   }, [isCheckoutFetching, checkoutData]);
 
