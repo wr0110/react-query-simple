@@ -5,7 +5,6 @@ import ArrowLeft from '../../assets/icons/ArrowLeft';
 import ArrowRight from '../../assets/icons/ArrowRight';
 
 const Slider = ({ images }) => {
-  console.log('images: ', images);
   const { slideIndex, nextSlide, prevSlide, moveDot } = useSlider(images.length);
 
   const handlers = useSwipeable({

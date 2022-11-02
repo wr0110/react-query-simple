@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import Loader from 'react-js-loader';
 import ReactPlayer from 'react-player';
 import axios from 'axios';
 import { useQuery } from 'react-query';
@@ -54,15 +55,20 @@ function App() {
   const [checkout, setCheckout] = useState(false);
   const { slideIndex, nextSlide, prevSlide, setLength } = useSlider(0);
   const [productsByVideo, setProductsByVideo] = useState([]);
-  const onLoadedData = () => setIsVideoLoaded(true);
+
+  const onLoadedData = () => {
+    setError(false);
+    setIsVideoLoaded(true);
+  };
 
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
   const [product, setProduct] = useState(null);
+  const [error, setError] = useState(false);
 
   const minSwipeDistance = 50;
-  console.log('render', indexVideo);
+
   const { data: videos, isLoading: isVideoLoading } = useQuery('videos', () =>
     getVideos(1, '5fc01d3d4061493cd8e52fea')
   );
@@ -81,7 +87,6 @@ function App() {
       const videoData = videos.data.data.map(({ id, attributes: { livestream_url: video, products } }) => {
         return { id, video, products };
       });
-      console.log('getvide');
       setProductsByVideo(videoData);
       setLength(videos.data.data.length);
     }
@@ -131,82 +136,119 @@ function App() {
   const handleCloseButtonClick = () => {
     setModalVisible(false);
     setShowDetails(false);
+    setError(false);
   };
+
+  console.log(error, productsByVideo[indexVideo - 1]?.video);
 
   return (
     <>
-      <>
+      {isVideoLoading ? (
+        <div style={{ width: '100%' }}>
+          <Loader type="spinner-default" bgColor="grey" size={100} />
+        </div>
+      ) : (
         <>
-          <SliderBtn up onClick={prevSlide}>
-            <ArrowUp />
-          </SliderBtn>
-
-          <SliderBtn onClick={nextSlide}>
-            <ArrowDown />
-          </SliderBtn>
-        </>
-        <VideoAndSliderContainer>
-          {isVideoLoaded && (
-            <WrapControl data-name={'wrap-control'}>
-              <WrapPlayer onClick={() => setPlay((prevState) => !prevState)}>
-                {play === false && (
-                  <ImgPlayButton src={'https://cdn-icons-png.flaticon.com/512/0/375.png'} alt="">
-                    <PlayIcon />
-                  </ImgPlayButton>
-                )}
-                <ReactPlayer
-                  className="react-player"
-                  url={productsByVideo[indexVideo - 1]?.video}
-                  playing={play}
-                  loop={true}
-                  muted={volume}
-                  onReady={onLoadedData}
-                  pip={true}
-                  ref={playerRef}
-                  onProgress={(progress) => {
-                    setProgress(progress);
-                  }}
-                  playsinline={true}
-                />
-              </WrapPlayer>
-              <PlayerControl
-                setProgress={setProgress}
-                seekToStart={seekToStart}
-                setVolume={setVolume}
-                volume={volume}
-                progress={progress}
-              />
-            </WrapControl>
-          )}
-          <SlideItemsContainer>
-            <Slide
-              style={{ height: '100%' }}
-              data-name={'app-slide'}
-              active={true}
-              onTouchStart={onTouchStart}
-              onTouchMove={onTouchMove}
-              onTouchEnd={onTouchEnd}
+          <>
+            <SliderBtn
+              up
+              onClick={() => {
+                prevSlide();
+                handleCloseButtonClick();
+              }}
             >
-              {!showDetails && (
-                <ProductsOfTheVideo
-                  products={productsByVideo[indexVideo - 1]?.products}
-                  handleClick={(index) => {
-                    setShowDetails(true);
-                    setProduct(productsByVideo[indexVideo - 1].products[index]);
-                  }}
+              <ArrowUp />
+            </SliderBtn>
+
+            <SliderBtn
+              onClick={() => {
+                nextSlide();
+                handleCloseButtonClick();
+              }}
+            >
+              <ArrowDown />
+            </SliderBtn>
+          </>
+          <VideoAndSliderContainer>
+            {isVideoLoaded && (
+              <WrapControl data-name={'wrap-control'}>
+                <WrapPlayer onClick={() => setPlay((prevState) => !prevState)}>
+                  {play === false && (
+                    <ImgPlayButton src={'https://cdn-icons-png.flaticon.com/512/0/375.png'} alt="">
+                      <PlayIcon />
+                    </ImgPlayButton>
+                  )}
+                  {error || !productsByVideo[indexVideo - 1]?.video ? (
+                    <div
+                      style={{
+                        textAlign: 'center',
+                        width: '75vw',
+                        height: '100vh',
+                        backgroundColor: 'black',
+                        color: 'red',
+                      }}
+                    >
+                      Video not available
+                    </div>
+                  ) : (
+                    <ReactPlayer
+                      className="react-player"
+                      url={productsByVideo[indexVideo - 1]?.video}
+                      playing={play}
+                      loop={true}
+                      muted={volume}
+                      onReady={onLoadedData}
+                      pip={true}
+                      ref={playerRef}
+                      onProgress={(progress) => {
+                        setProgress(progress);
+                      }}
+                      onError={() => {
+                        console.log('error');
+                        setError(true);
+                      }}
+                      playsinline={true}
+                    />
+                  )}
+                </WrapPlayer>
+                <PlayerControl
+                  setProgress={setProgress}
+                  seekToStart={seekToStart}
+                  setVolume={setVolume}
+                  volume={volume}
+                  progress={progress}
                 />
-              )}
-              {showDetails && product && (
-                <SingleProductWrapper show data-name={'wrapper'}>
-                  <Container col justify>
-                    <Slider images={product.images} />
-                    <Container col items margin>
-                      <Text>{product.name}</Text>
-                      <Text bigger margin>
-                        {product.price}
-                      </Text>
-                    </Container>
-                    {/* <ContainerSelect>
+              </WrapControl>
+            )}
+            <SlideItemsContainer>
+              <Slide
+                style={{ height: '100%' }}
+                data-name={'app-slide'}
+                active={true}
+                onTouchStart={onTouchStart}
+                onTouchMove={onTouchMove}
+                onTouchEnd={onTouchEnd}
+              >
+                {!showDetails && (
+                  <ProductsOfTheVideo
+                    products={productsByVideo[indexVideo - 1]?.products}
+                    handleClick={(index) => {
+                      setShowDetails(true);
+                      setProduct(productsByVideo[indexVideo - 1].products[index]);
+                    }}
+                  />
+                )}
+                {showDetails && product && (
+                  <SingleProductWrapper show data-name={'wrapper'}>
+                    <Container col justify>
+                      <Slider images={product.images} />
+                      <Container col items margin>
+                        <Text>{product.name}</Text>
+                        <Text bigger margin>
+                          {product.price}
+                        </Text>
+                      </Container>
+                      {/* <ContainerSelect>
                           <TextSelect>colour</TextSelect>
                           <CustomSelectbox disabled name={'colour'}>
                             <option value="" hidden>
@@ -227,70 +269,6 @@ function App() {
                             ))}
                           </CustomSelectbox>
                         </ContainerSelect> */}
-                    <ContainerButton>
-                      <CustomButton
-                        onClick={() => {
-                          setCheckout(true);
-                          addToCard();
-                        }}
-                        title={items === 5 ? 'Error adding to card' : 'Add to card'}
-                        primary
-                      />
-                      <CustomButton title="Product details" />
-                    </ContainerButton>
-                  </Container>
-                  <AnimatePresence>
-                    {checkout ? <Checkout items={items} setItems={setItems} setCheckout={setCheckout} /> : null}
-                  </AnimatePresence>
-                  <ContainerCloseButton modal onClick={handleCloseButtonClick}>
-                    <MenuClose />
-                  </ContainerCloseButton>
-                </SingleProductWrapper>
-              )}
-
-              <AnimatePresence>
-                {modalVisible ? (
-                  <ContainerModal
-                    transition={{ duration: 0.3 }}
-                    exit={{ y: '100%' }}
-                    animate={{ y: 0 }}
-                    initial={{ y: '100%' }}
-                  >
-                    <AnimatePresence>
-                      {checkout ? <Checkout items={items} setItems={setItems} setCheckout={setCheckout} /> : null}
-                    </AnimatePresence>
-                    <ContainerInnerModal col justify>
-                      <ContainerCloseModalButton modal onClick={() => setModalVisible(false)}>
-                        <AiOutlineDown />
-                      </ContainerCloseModalButton>
-                      <Slider images={product.images} />
-                      <Container col items margin>
-                        <Text margin>{product.name}</Text>
-                        <Text bigger margin>
-                          {product.price}
-                        </Text>
-                      </Container>
-                      <ContainerSelect>
-                        <TextSelect>Colour</TextSelect>
-                        <CustomSelectbox disabled name={'colour'}>
-                          <option value="" hidden>
-                            {product.color}
-                          </option>
-                        </CustomSelectbox>
-                      </ContainerSelect>
-                      <ContainerSelect>
-                        <TextSelect>Size</TextSelect>
-                        <CustomSelectbox>
-                          <option value="" hidden style={{}}>
-                            Select one size
-                          </option>
-                          {product.sizes.map((size) => (
-                            <option value={size} key={size}>
-                              {size}
-                            </option>
-                          ))}
-                        </CustomSelectbox>
-                      </ContainerSelect>
                       <ContainerButton>
                         <CustomButton
                           onClick={() => {
@@ -302,16 +280,81 @@ function App() {
                         />
                         <CustomButton title="Product details" />
                       </ContainerButton>
-                    </ContainerInnerModal>
-                  </ContainerModal>
-                ) : (
-                  ''
+                    </Container>
+                    <AnimatePresence>
+                      {checkout ? <Checkout items={items} setItems={setItems} setCheckout={setCheckout} /> : null}
+                    </AnimatePresence>
+                    <ContainerCloseButton modal onClick={handleCloseButtonClick}>
+                      <MenuClose />
+                    </ContainerCloseButton>
+                  </SingleProductWrapper>
                 )}
-              </AnimatePresence>
-            </Slide>
-          </SlideItemsContainer>
-        </VideoAndSliderContainer>
-      </>
+
+                <AnimatePresence>
+                  {modalVisible ? (
+                    <ContainerModal
+                      transition={{ duration: 0.3 }}
+                      exit={{ y: '100%' }}
+                      animate={{ y: 0 }}
+                      initial={{ y: '100%' }}
+                    >
+                      <AnimatePresence>
+                        {checkout ? <Checkout items={items} setItems={setItems} setCheckout={setCheckout} /> : null}
+                      </AnimatePresence>
+                      <ContainerInnerModal col justify>
+                        <ContainerCloseModalButton modal onClick={() => setModalVisible(false)}>
+                          <AiOutlineDown />
+                        </ContainerCloseModalButton>
+                        <Slider images={product.images} />
+                        <Container col items margin>
+                          <Text margin>{product.name}</Text>
+                          <Text bigger margin>
+                            {product.price}
+                          </Text>
+                        </Container>
+                        <ContainerSelect>
+                          <TextSelect>Colour</TextSelect>
+                          <CustomSelectbox disabled name={'colour'}>
+                            <option value="" hidden>
+                              {product.color}
+                            </option>
+                          </CustomSelectbox>
+                        </ContainerSelect>
+                        <ContainerSelect>
+                          <TextSelect>Size</TextSelect>
+                          <CustomSelectbox>
+                            <option value="" hidden style={{}}>
+                              Select one size
+                            </option>
+                            {product.sizes.map((size) => (
+                              <option value={size} key={size}>
+                                {size}
+                              </option>
+                            ))}
+                          </CustomSelectbox>
+                        </ContainerSelect>
+                        <ContainerButton>
+                          <CustomButton
+                            onClick={() => {
+                              setCheckout(true);
+                              addToCard();
+                            }}
+                            title={items === 5 ? 'Error adding to card' : 'Add to card'}
+                            primary
+                          />
+                          <CustomButton title="Product details" />
+                        </ContainerButton>
+                      </ContainerInnerModal>
+                    </ContainerModal>
+                  ) : (
+                    ''
+                  )}
+                </AnimatePresence>
+              </Slide>
+            </SlideItemsContainer>
+          </VideoAndSliderContainer>
+        </>
+      )}
     </>
   );
 }
