@@ -9,12 +9,12 @@ import {
 } from './style';
 import ArrowLeft from '../../assets/icons/ArrowLeft';
 
-const ProductsOfTheVideo = ({ products, handleClick }) => {
+const ProductsOfTheVideo = ({ products = [], handleClick }) => {
   return (
-    <MainContainer onClick={handleClick}>
-      {products.map((product) => {
+    <MainContainer>
+      {products.map((product, index) => {
         return (
-          <ProductRow key={product.name}>
+          <ProductRow key={product.name} onClick={() => handleClick(index)}>
             <ProductImage src={product.images[0]} alt={product.name} />
             <ProductTitleAndPriceContainer>
               <ProductPrice>{product.price}</ProductPrice>
